@@ -3,8 +3,6 @@ package main
 import(
 	"log"
 	"net/http"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"github.com/gorilla/mux"
 	"github.com/ujjavalparmar/go-bookstore/pkg/routes"
 )
