@@ -5,40 +5,41 @@ import (
 	"github.com/ujjavalparmar/go-bookstore/pkg/config"
 )
 
-var db * gorm.DB
+var db *gorm.DB
 
 type Book struct {
 	gorm.Model
-	Name        string `gorm:"type:varchar(255)" json:"name"`
-	Author      string `gorm:"type:varchar(255)" json:"author"`
-	Publication string `gorm:"type:varchar(255)" json:"publication"`
+	Name        string `json:"name"`
+	Author      string `json:"author"`
+	Publication string `json:"publication"`
 }
 
-func init(){
+func init() {
 	config.Connect()
 	db = config.GetDB()
 	db.AutoMigrate(&Book{})
 }
 
-func (b *Book) CreateBook() *Book{
-	db.Create(&b)
+func (b *Book) CreateBook() *Book {
+	db.Create(&b) // No need for NewRecord in GORM v2
 	return b
 }
 
-func GetAllBooks() []Book{
-	var Books []Book
-	db.Find(&Books)
-	return Books
+func GetAllBooks() []Book {
+	var books []Book
+	db.Find(&books)
+	return books
 }
 
-func GetBookById(Id int64) (*Book, *gorm.DB){
+func GetBookById(Id int64) (*Book, *gorm.DB) {
 	var getBook Book
-	db := db.Where("ID=?", Id).Find(&getBook)
-	return &getBook, db
+	result := db.First(&getBook, Id) // Use First instead of Where().Find()
+	return &getBook, result
 }
 
-func DeleteBook(ID int64) Book{
+func DeleteBook(ID int64) Book {
 	var book Book
-	db.Where("ID=?", ID).Delete(&book)
+	db.Delete(&book, ID) // GORM v2 Delete syntax
 	return book
 }
+
